@@ -78,14 +78,16 @@ client.on(Events.MessageCreate, async (message) => {
       userMessage = "What is trending?"
     }
 
-    // Show typing indicator
     await message.channel.sendTyping()
 
-    // Fetch Polymarket events
+    console.log(`[v0] User ${message.author.username} asked: "${userMessage}"`)
     const events = await polymarketService.fetchActiveEvents()
+    console.log(`[v0] Received ${events.length} events for response`)
 
     if (events.length === 0) {
-      await message.reply("Sorry, I couldn't fetch any active markets right now. Please try again later.")
+      await message.reply(
+        "Sorry, I couldn't fetch any active markets right now. The Polymarket API might be temporarily unavailable. Please try again in a moment! 🔄",
+      )
       return
     }
 
@@ -103,8 +105,9 @@ client.on(Events.MessageCreate, async (message) => {
     // Send response
     await message.reply({ embeds: [embed] })
   } catch (error) {
-    console.error("[Polymarket Bot] Error handling message:", error)
-    await message.reply("Sorry, I encountered an error. Please try again.")
+    console.error("[v0] Error handling message:", error)
+    console.error("[v0] Error stack:", error.stack)
+    await message.reply("Sorry, I encountered an error processing your request. Please try again! ⚠️")
   }
 })
 
