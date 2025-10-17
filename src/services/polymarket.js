@@ -1,117 +1,110 @@
-import axios from "axios"
+import axios from "axios";
 
 export class PolymarketService {
   constructor() {
-    this.gammaUrl = "https://gamma-api.polymarket.com"
+    this.gammaUrl = "https://gamma-api.polymarket.com";
   }
 
+  /**
+   * Fetch all active events from Polymarket
+   */
   async fetchActiveEvents() {
     try {
-      console.log("[v0] Fetching events from Gamma API...")
-      console.log("[v0] URL:", `${this.gammaUrl}/events?limit=100&active=true`)
+      console.log("[Polymarket] Fetching events...");
 
       const response = await axios.get(`${this.gammaUrl}/events`, {
-        params: {
-          limit: 100,
-          active: true,
-        },
-        timeout: 10000, // 10 second timeout
-      })
+        params: { limit: 100, active: true },
+        timeout: 10000,
+      });
 
-      console.log("[v0] Response status:", response.status)
-      console.log("[v0] Response data type:", typeof response.data)
-      console.log("[v0] Is array:", Array.isArray(response.data))
+      // DEBUG: log raw API response
+      console.log("[Polymarket] Raw response:", JSON.stringify(response.data, null, 2));
 
-      const events = Array.isArray(response.data) ? response.data : response.data.data || response.data.events || []
+      // Parse response correctly depending on API structure
+      const events =
+        Array.isArray(response.data)
+          ? response.data
+          : Array.isArray(response.data.result)
+          ? response.data.result
+          : Array.isArray(response.data.data)
+          ? response.data.data
+          : [];
 
-      console.log(`[v0] Total events received: ${events.length}`)
-
-      if (events.length > 0) {
-        console.log(`[v0] Sample event keys:`, Object.keys(events[0]))
-        console.log(`[v0] Sample event:`, {
-          title: events[0].title,
-          volume: events[0].volume,
-          active: events[0].active,
-          closed: events[0].closed,
-        })
+      if (!events.length) {
+        console.log("[Polymarket] No events returned from API");
+        return [];
       }
 
+      // Filter active events with volume > 0 and not closed
       const activeEvents = events.filter((event) => {
-        const hasVolume = event.volume && Number.parseFloat(event.volume) > 0
-        const notClosed = event.closed !== true
-        const isActive = event.active !== false
+        const hasVolume = Number.parseFloat(event.volume || 0) > 0;
+        const isActive = event.active !== false;
+        const notClosed = event.closed !== true;
+        return hasVolume && isActive && notClosed;
+      });
 
-        if (hasVolume && notClosed && isActive) {
-          console.log(
-            `[v0] ✓ Including: "${event.title?.substring(0, 40)}..." - Volume: $${(
-              Number.parseFloat(event.volume) / 1000000
-            ).toFixed(2)}M`,
-          )
-        }
+      // Sort by volume descending
+      activeEvents.sort((a, b) => Number.parseFloat(b.volume || 0) - Number.parseFloat(a.volume || 0));
 
-        return hasVolume && notClosed && isActive
-      })
+      console.log(`[Polymarket] ${activeEvents.length} active events after filtering`);
 
-      // Sort by volume (highest first)
-      activeEvents.sort((a, b) => Number.parseFloat(b.volume || 0) - Number.parseFloat(a.volume || 0))
-
-      console.log(`[v0] ✓ ${activeEvents.length} active events after filtering`)
-
-      return activeEvents
+      return activeEvents;
     } catch (error) {
-      console.error("[v0] ❌ Error fetching events:")
-      console.error("[v0] Error message:", error.message)
+      console.error("[Polymarket] Error fetching events:", error.message);
       if (error.response) {
-        console.error("[v0] Response status:", error.response.status)
-        console.error("[v0] Response data:", error.response.data)
-      } else if (error.request) {
-        console.error("[v0] No response received from API")
-        console.error("[v0] Request details:", error.request)
-      } else {
-        console.error("[v0] Error setting up request:", error.message)
+        console.error("[Polymarket] Response status:", error.response.status);
+        console.error("[Polymarket] Response data:", error.response.data);
       }
-      return []
+      return [];
     }
   }
 
-  async getTop3Markets() {
-    try {
-      const events = await this.fetchActiveEvents()
+  /**
+   * Return top N markets formatted for Discord
+   */
+  async getTopMarkets(count = 3) {
+    const events = await this.fetchActiveEvents();
 
-      if (!events || events.length === 0) {
-        console.log("[v0] No events available for top 3 markets")
-        return null
-      }
+    if (!events.length) return [];
 
-      console.log(`[v0] Returning top 3 markets from ${events.length} total events`)
-      // Return top 3 events
-      return events.slice(0, 3).map((event) => this.formatEventForDiscord(event))
-    } catch (error) {
-      console.error("[v0] Error in getTop3Markets:", error)
-      return null
-    }
+    return events.slice(0, count).map((event) => this.formatEventForDiscord(event));
   }
 
+  /**
+   * Format a single event for Discord message
+   */
   formatEventForDiscord(event) {
-    const volumeInM = (Number.parseFloat(event.volume) / 1000000).toFixed(2)
+    const volumeInM = (Number.parseFloat(event.volume || 0) / 1000000).toFixed(2);
 
     return {
-      title: event.title,
+      title: event.title || "Unknown Event",
       volume: `$${volumeInM}M`,
       active: event.active,
       slug: event.slug,
       url: `https://polymarket.com/event/${event.slug}`,
-    }
+    };
   }
 
-  formatMarketContext(events) {
-    // Format top 5 events for AI context
-    return events
-      .slice(0, 5)
-      .map((event, idx) => {
-        const volumeInM = (Number.parseFloat(event.volume) / 1000000).toFixed(2)
-        return `${idx + 1}. "${event.title}" - Volume: $${volumeInM}M, Active: ${event.active}`
-      })
-      .join("\n")
+  /**
+   * Provide a simple suggestion for prediction (randomly)
+   * Example: “Market X is likely to go YES/NO”
+   */
+  getPredictionSuggestion(event) {
+    if (!event) return "No market data available to suggest.";
+
+    // Pick random YES or NO
+    const options = ["YES", "NO"];
+    const choice = options[Math.floor(Math.random() * options.length)];
+
+    return `For "${event.title}", my suggestion is: **${choice}**. 🔮`;
   }
-}
+
+  /**
+   * Prepare context string for AI / Discord replies
+   */
+  formatMarketContext(events, limit = 5) {
+    return events
+      .slice(0, limit)
+      .map((event, idx) => {
+        const volumeInM = (Number.parseFloat(event.volume || 0) / 1000000).toFixed(2);
+        return `${idx + 1}. "${event.title}" - Volume: $${v
