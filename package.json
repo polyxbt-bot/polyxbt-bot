@@ -24,6 +24,7 @@
     "dotenv": "latest",
     "lucide-react": "^0.454.0",
     "next": "15.2.4",
+    "node-fetch": "^3.3.2",
     "openai": "^4.28.0",
     "react": "^19",
     "react-dom": "^19",
