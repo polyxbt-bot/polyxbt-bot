@@ -5,28 +5,48 @@ export class PolymarketService {
 
   async fetchActiveEvents() {
     try {
-      console.log("[Polymarket Bot] Fetching events from Gamma API...")
+      console.log("[v0] Fetching events from Gamma API...")
       const response = await fetch(`${this.gammaUrl}/events?limit=100&active=true`)
 
       if (!response.ok) {
+        console.error(`[v0] API returned status: ${response.status}`)
         throw new Error(`API error: ${response.status}`)
       }
 
-      const events = await response.json()
-      console.log(`[Polymarket Bot] Fetched ${events.length} events`)
+      const data = await response.json()
+      console.log(`[v0] Raw API response type:`, typeof data)
+      console.log(`[v0] Is array:`, Array.isArray(data))
 
-      // Filter for active, non-closed events with volume
-      const activeEvents = events.filter(
-        (event) => event.active === true && event.closed === false && event.archived === false && event.volume > 0,
-      )
+      const events = Array.isArray(data) ? data : data.data || data.events || []
+
+      console.log(`[v0] Total events received: ${events.length}`)
+
+      if (events.length > 0) {
+        console.log(`[v0] Sample event structure:`, JSON.stringify(events[0], null, 2))
+      }
+
+      const activeEvents = events.filter((event) => {
+        const hasVolume = event.volume && Number.parseFloat(event.volume) > 0
+        const isActive = event.active !== false && event.closed !== true
+
+        console.log(`[v0] Event "${event.title?.substring(0, 50)}..." - active: ${isActive}, volume: ${event.volume}`)
+
+        return hasVolume && isActive
+      })
 
       // Sort by volume (highest first)
-      activeEvents.sort((a, b) => Number.parseFloat(b.volume) - Number.parseFloat(a.volume))
+      activeEvents.sort((a, b) => Number.parseFloat(b.volume || 0) - Number.parseFloat(a.volume || 0))
 
-      console.log(`[Polymarket Bot] ${activeEvents.length} active events after filtering`)
+      console.log(`[v0] ${activeEvents.length} active events after filtering`)
+
+      if (activeEvents.length > 0) {
+        console.log(`[v0] Top event: "${activeEvents[0].title}" with volume: ${activeEvents[0].volume}`)
+      }
+
       return activeEvents
     } catch (error) {
-      console.error("[Polymarket Bot] Error fetching events:", error)
+      console.error("[v0] Error fetching events:", error.message)
+      console.error("[v0] Full error:", error)
       return []
     }
   }
