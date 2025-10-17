@@ -43,7 +43,9 @@ export class PolymarketService {
 
         if (hasVolume && notClosed && isActive) {
           console.log(
-            `[v0] ✓ Including: "${event.title?.substring(0, 40)}..." - Volume: $${(Number.parseFloat(event.volume) / 1000000).toFixed(2)}M`,
+            `[v0] ✓ Including: "${event.title?.substring(0, 40)}..." - Volume: $${(
+              Number.parseFloat(event.volume) / 1000000
+            ).toFixed(2)}M`,
           )
         }
 
