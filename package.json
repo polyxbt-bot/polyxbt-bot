@@ -1,0 +1,41 @@
+{
+  "name": "polyxbt-discord-bot",
+  "version": "1.0.0",
+  "description": "PolyXBT - Autonomous prediction-market analyst Discord bot",
+  "keywords": [
+    "discord",
+    "bot",
+    "polymarket",
+    "ai"
+  ],
+  "license": "MIT",
+  "author": "",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.7",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "discord.js": "latest",
+    "dotenv": "latest",
+    "lucide-react": "^0.454.0",
+    "next": "15.2.4",
+    "openai": "^4.28.0",
+    "react": "^19",
+    "react-dom": "^19",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "postcss": "^8.5",
+    "tailwindcss": "4.1.14",
+    "typescript": "^5"
+  }
+}
