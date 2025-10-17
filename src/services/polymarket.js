@@ -1,3 +1,5 @@
+import axios from "axios"
+
 export class PolymarketService {
   constructor() {
     this.gammaUrl = "https://gamma-api.polymarket.com"
@@ -6,47 +8,66 @@ export class PolymarketService {
   async fetchActiveEvents() {
     try {
       console.log("[v0] Fetching events from Gamma API...")
-      const response = await fetch(`${this.gammaUrl}/events?limit=100&active=true`)
+      console.log("[v0] URL:", `${this.gammaUrl}/events?limit=100&active=true`)
 
-      if (!response.ok) {
-        console.error(`[v0] API returned status: ${response.status}`)
-        throw new Error(`API error: ${response.status}`)
-      }
+      const response = await axios.get(`${this.gammaUrl}/events`, {
+        params: {
+          limit: 100,
+          active: true,
+        },
+        timeout: 10000, // 10 second timeout
+      })
 
-      const data = await response.json()
-      console.log(`[v0] Raw API response type:`, typeof data)
-      console.log(`[v0] Is array:`, Array.isArray(data))
+      console.log("[v0] Response status:", response.status)
+      console.log("[v0] Response data type:", typeof response.data)
+      console.log("[v0] Is array:", Array.isArray(response.data))
 
-      const events = Array.isArray(data) ? data : data.data || data.events || []
+      const events = Array.isArray(response.data) ? response.data : response.data.data || response.data.events || []
 
       console.log(`[v0] Total events received: ${events.length}`)
 
       if (events.length > 0) {
-        console.log(`[v0] Sample event structure:`, JSON.stringify(events[0], null, 2))
+        console.log(`[v0] Sample event keys:`, Object.keys(events[0]))
+        console.log(`[v0] Sample event:`, {
+          title: events[0].title,
+          volume: events[0].volume,
+          active: events[0].active,
+          closed: events[0].closed,
+        })
       }
 
       const activeEvents = events.filter((event) => {
         const hasVolume = event.volume && Number.parseFloat(event.volume) > 0
-        const isActive = event.active !== false && event.closed !== true
+        const notClosed = event.closed !== true
+        const isActive = event.active !== false
 
-        console.log(`[v0] Event "${event.title?.substring(0, 50)}..." - active: ${isActive}, volume: ${event.volume}`)
+        if (hasVolume && notClosed && isActive) {
+          console.log(
+            `[v0] ✓ Including: "${event.title?.substring(0, 40)}..." - Volume: $${(Number.parseFloat(event.volume) / 1000000).toFixed(2)}M`,
+          )
+        }
 
-        return hasVolume && isActive
+        return hasVolume && notClosed && isActive
       })
 
       // Sort by volume (highest first)
       activeEvents.sort((a, b) => Number.parseFloat(b.volume || 0) - Number.parseFloat(a.volume || 0))
 
-      console.log(`[v0] ${activeEvents.length} active events after filtering`)
-
-      if (activeEvents.length > 0) {
-        console.log(`[v0] Top event: "${activeEvents[0].title}" with volume: ${activeEvents[0].volume}`)
-      }
+      console.log(`[v0] ✓ ${activeEvents.length} active events after filtering`)
 
       return activeEvents
     } catch (error) {
-      console.error("[v0] Error fetching events:", error.message)
-      console.error("[v0] Full error:", error)
+      console.error("[v0] ❌ Error fetching events:")
+      console.error("[v0] Error message:", error.message)
+      if (error.response) {
+        console.error("[v0] Response status:", error.response.status)
+        console.error("[v0] Response data:", error.response.data)
+      } else if (error.request) {
+        console.error("[v0] No response received from API")
+        console.error("[v0] Request details:", error.request)
+      } else {
+        console.error("[v0] Error setting up request:", error.message)
+      }
       return []
     }
   }
@@ -56,13 +77,15 @@ export class PolymarketService {
       const events = await this.fetchActiveEvents()
 
       if (!events || events.length === 0) {
+        console.log("[v0] No events available for top 3 markets")
         return null
       }
 
+      console.log(`[v0] Returning top 3 markets from ${events.length} total events`)
       // Return top 3 events
       return events.slice(0, 3).map((event) => this.formatEventForDiscord(event))
     } catch (error) {
-      console.error("[Polymarket Bot] Error fetching top 3 markets:", error)
+      console.error("[v0] Error in getTop3Markets:", error)
       return null
     }
   }
