@@ -33,8 +33,7 @@ config/	SDK selection and configuration
 deploy/	Deployment scripts and CI/CD setup
 README.md	Documentation
 
-
-<img src="https://raw.githubusercontent.com/polyxbt-bot/polyxbt-bot/main/assets/polymarket-logo.png" width="120" alt="Polymarket"> </p>
+<p align="center"> <img src="https://raw.githubusercontent.com/polyxbt-bot/polyxbt-bot/main/assets/polymarket-logo.png" width="120" alt="Polymarket"> </p>
 
 
 
