@@ -31,9 +31,7 @@ src/ai/	AI SDK integration logic (OpenAI, Mistral, OpenRouter)
 src/market/	Polymarket API connectors for real-time data
 config/	SDK selection and configuration
 deploy/	Deployment scripts and CI/CD setup
-.env.example	Local secret management example
 README.md	Documentation
-🔐 Authentication & Secrets
 
 
 <img src="https://raw.githubusercontent.com/polyxbt-bot/polyxbt-bot/main/assets/polymarket-logo.png" width="120" alt="Polymarket"> </p>
@@ -41,14 +39,6 @@ README.md	Documentation
 
 
 All SDK authentication is handled via environment variables:
-
-# .env example
-DISCORD_TOKEN=your-discord-bot-token
-POLYMARKET_API=https://clob.polymarket.com
-OPENAI_API_KEY=your-openai-api-key
-MISTRAL_API_KEY=your-mistral-api-key
-OPENROUTER_API_KEY=your-openrouter-api-key
-
 
 **Supported secret storage:**
 
