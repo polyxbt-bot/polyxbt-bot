@@ -1,74 +1,159 @@
 🧠 PolyXBT — Discord Prediction Bot
-AI-Powered Market Insights from Polymarket
-<p align="center"> <img src="https://raw.githubusercontent.com/polyxbt-bot/polyxbt-bot/main/assets/polyxbt-logo-dark.png" width="140" alt="PolyXBT Logo"> </p> <p align="center"> <a href="https://github.com/polyxbt-bot/polyxbt-bot/actions"><img src="https://img.shields.io/github/actions/workflow/status/polyxbt-bot/polyxbt-bot/main.yml?label=build&logo=github&style=for-the-badge" alt="Build Status"></a> <a href="https://github.com/polyxbt-bot/polyxbt-bot/blob/main/LICENSE"><img src="https://img.shields.io/github/license/polyxbt-bot/polyxbt-bot?style=for-the-badge&color=blue" alt="License"></a> <a href="https://github.com/polyxbt-bot/polyxbt-bot/releases"><img src="https://img.shields.io/github/v/release/polyxbt-bot/polyxbt-bot?style=for-the-badge&color=brightgreen" alt="GitHub tag"></a> <img src="https://img.shields.io/badge/verified-project-blue?style=for-the-badge&logo=github" alt="Verified Project"> <img src="https://img.shields.io/badge/discord-live-blueviolet?style=for-the-badge&logo=discord" alt="Discord Integration"> </p>
+AI-Driven Market Intelligence from Polymarket
+<p align="center"> <img src="https://raw.githubusercontent.com/polyxbt-bot/polyxbt-bot/main/assets/polyxbt-logo-dark.png" width="140" alt="PolyXBT Logo"> </p> <p align="center"> <img src="https://img.shields.io/badge/verified-project-blue?style=for-the-badge&logo=github" alt="Verified Project"> <img src="https://img.shields.io/badge/discord-live-blueviolet?style=for-the-badge&logo=discord" alt="Discord Integration"> <img src="https://img.shields.io/github/license/polyxbt-bot/polyxbt-bot?style=for-the-badge&color=blue" alt="License"> </p>
 💬 Overview
 
-PolyXBT Dev — an open-source Discord bot framework built for market prediction, community AI agents, and real-time data analysis.
+PolyXBT is an open-source Discord bot that provides real-time prediction market insights and AI-assisted market reasoning.
+It integrates with Polymarket’s live data client and supports AI via SDKs like OpenAI, Mistral, and OpenRouter, enabling Discord communities to access intelligent, market-aware responses without exposing API keys in code.
 
-This bot interacts with Polymarket
- using live data feeds and integrates AI SDKs like Mistral, OpenAI, and OpenRouter to provide contextual insights, forecasts, and trading sentiment inside your Discord server.
+PolyXBT acts as a community trading assistant, fetching real-time event data, analyzing probabilities, and summarizing sentiment — all within Discord.
 
-🧩 What This Project Does
+🧩 Key Features
 
-⚡ Real-time Polymarket data tracking via public APIs
+⚡ Real-time market data directly from Polymarket
 
-🧠 AI-driven predictions (Mistral / OpenAI SDKs)
+🤖 AI-generated insights using OpenAI, Mistral, or open-source language models via SDK
 
-🧾 Market analysis summaries delivered directly in Discord channels
+🔄 Dynamic command framework — easily extend or add new market modules
 
-🔄 Modular command system — easily extendable
+🧠 Hybrid SDK integration layer — switch AI providers without changing code
 
-🔒 Secure secret management — ready for Railway, Vercel, or GitHub Actions
+🔒 No exposed credentials — compatible with Railway, Vercel, or GitHub Actions
 
-🧰 Plug-and-play developer setup
+📊 Structured market reasoning — not random text, but data-driven insights
 
-🗂️ Project Structure
-Path	Description
-index.js / src/	Main bot entrypoints (cleaned and modular)
-deploy/	Deployment and CI/CD scripts
-README.md	Project documentation
-.env.example	Example for local environment setup
-🔐 Authentication & Security
+🏗️ Project Structure
+Folder / File	Description
+index.js	Bot entrypoint — loads Discord client, commands, and AI SDK handlers
+src/	Core source files (commands, API connectors, adapters)
+src/ai/	AI SDK integration logic (OpenAI, Mistral, OpenRouter)
+src/market/	Polymarket API connectors for real-time data
+config/	SDK selection and configuration
+deploy/	Deployment scripts and CI/CD setup
+.env.example	Local secret management example
+README.md	Documentation
+🔐 Authentication & Secrets
 
-No API keys are stored in this repo.
-Use one of the following for secrets management:
+PolyXBT does not store API keys in the code. All SDK authentication is handled via environment variables:
 
-🔸 Railway / Vercel / Heroku → manage environment variables directly
+# .env example
+DISCORD_TOKEN=your-discord-bot-token
+POLYMARKET_API=https://clob.polymarket.com
+OPENAI_API_KEY=your-openai-api-key
+MISTRAL_API_KEY=your-mistral-api-key
+OPENROUTER_API_KEY=your-openrouter-api-key
 
-🔸 GitHub Actions → store secrets securely in CI/CD
 
-🔸 Local development only: use .env (never commit it)
+Supported secret storage:
 
-Example environment variable:
+Railway / Vercel / Heroku environment variables
 
-SDK_AUTH_PLACEHOLDER="your-api-key"
+GitHub Actions secrets
 
-🧠 Replacing SDKs
+Local .env (for development only)
 
-The bot uses modular SDK adapters — you can switch between AI providers easily:
+The bot will automatically detect which AI SDK to use based on the available keys.
 
-# Install your preferred SDK
-npm install openai        # or mistral / openrouter
+⚙️ How the AI SDKs Work
 
-# Then edit
-config/sdk.js
+PolyXBT uses a modular SDK architecture:
 
-🪙 Integration Logos
-<p align="center"> <img src="https://raw.githubusercontent.com/polyxbt-bot/polyxbt-bot/main/assets/polyxbt-logo-blue.png" width="120" alt="PolyXBT"> <img src="https://raw.githubusercontent.com/polyxbt-bot/polyxbt-bot/main/assets/polymarket-logo.png" width="120" alt="Polymarket"> </p>
-📦 License
+User sends a command in Discord, e.g.:
 
-This project is licensed under the MIT License — free for public and commercial use.
+/predict "Who will win the US Election?"
 
-👨‍💻 Maintainer
 
-PolyXBT Dev — 2025-10-22
+PolyXBT fetches data from Polymarket via the open API:
 
-A community initiative to bring prediction markets and AI closer together.
+https://clob.polymarket.com/markets
 
-🌐 Links
 
-🔗 GitHub: polyxbt-bot/polyxbt-bot
+Or via the official real-time-data-client
+.
 
-💬 Discord: Coming soon
+Format the data into a structured prompt:
 
-📊 Data Source: Polymarket Real-Time Client
+const prompt = `Analyze this Polymarket event: ${marketTitle}, 
+with probabilities ${outcomeData}. Provide insights for traders.`;
+
+
+Send prompt to selected AI SDK (example: Mistral):
+
+import { MistralClient } from "@mistralai/mistralai";
+
+const client = new MistralClient({ apiKey: process.env.MISTRAL_API_KEY });
+const response = await client.chat({
+  model: "mistral-medium",
+  messages: [{ role: "user", content: prompt }],
+});
+
+channel.send(`🧠 PolyXBT Insight:\n${response.output}`);
+
+
+You can swap OpenAI or OpenRouter by updating config/sdk.js.
+
+SDK usage avoids exposing raw API keys in commands or logs.
+
+🪙 Polymarket Data Integration
+
+PolyXBT fetches and parses market data to create Discord-friendly responses:
+
+Key endpoints:
+
+GET https://clob.polymarket.com/markets
+GET https://polymarket.com/api/events
+
+
+Discord embeds include:
+
+Event title
+
+Market probability
+
+Current price or odds
+
+AI-generated reasoning summary
+
+🧠 SDK Integration Diagram
+Discord User → PolyXBT Bot → Polymarket API
+                     ↓
+             AI Adapter Layer (SDK)
+     ├─ OpenAI GPT-4
+     ├─ Mistral Medium
+     └─ OpenRouter / OSS Models
+                     ↓
+              Discord Response
+
+🪄 Example Command
+/predict "Who will win the US Election?"
+
+
+Discord Response:
+
+🧠 PolyXBT Insight
+Based on Polymarket data, Candidate X has a 63% implied probability.
+Market sentiment remains bullish due to strong polling in swing states.
+
+📦 Deployment
+
+Run locally:
+
+npm install
+npm run start
+
+
+Deploy:
+
+Railway: zero-config with environment variables
+
+Vercel: GitHub deploy + set environment variables
+
+GitHub Actions: use /deploy/deploy.yml for automated CI/CD
+
+🖼️ Visual Identity
+<p align="center"> <img src="https://raw.githubusercontent.com/polyxbt-bot/polyxbt-bot/main/assets/polyxbt-logo-blue.png" width="130" alt="PolyXBT"> <img src="https://raw.githubusercontent.com/polyxbt-bot/polyxbt-bot/main/assets/polymarket-logo.png" width="120" alt="Polymarket"> </p>
+📜 License
+
+MIT License — free to use, modify, and redistribute.
+See LICENSE
+ for details.
