@@ -1,6 +1,6 @@
 **🧠 PolyXBT — Discord Prediction Bot**
 AI-Driven Market Intelligence from Polymarket
-<p align="center"> <img src="https://raw.githubusercontent.com/polyxbt-bot/polyxbt-bot/main/assets/polyxbt-logo-dark.png" width="140" alt="PolyXBT Logo"> </p> <p align="center"> <img src="https://img.shields.io/badge/verified-project-blue?style=for-the-badge&logo=github" alt="Verified Project"> <img src="https://img.shields.io/badge/discord-live-blueviolet?style=for-the-badge&logo=discord" alt="Discord Integration"> <img src="https://img.shields.io/github/license/polyxbt-bot/polyxbt-bot?style=for-the-badge&color=blue" alt="License"> </p>
+<p align="center"> <img src="https://raw.githubusercontent.com/polyxbt-bot/polyxbt-bot/main/assets/polyxbt-logo-dark.png" width="140" alt="PolyXBT Logo"> </p> 
 
 
 **💬 Overview**
