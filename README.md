@@ -134,8 +134,4 @@ npm run start
 <p align="center"> <img src="https://raw.githubusercontent.com/polyxbt-bot/polyxbt-bot/main/assets/polyxbt-logo-blue.png" width="130" alt="PolyXBT"> 
 
   
-**📜 License**
-
-MIT License — free to use, modify, and redistribute.
-See LICENSE
- for details.
+This project is licensed under the Apache License 2.0. You may freely use, modify, and distribute the software in accordance with the Apache-2.0 License.
