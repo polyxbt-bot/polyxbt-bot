@@ -5,7 +5,7 @@ AI-Driven Market Intelligence from Polymarket
 
 **💬 Overview**
 PolyXBT is an open-source Discord bot that provides real-time prediction market insights and AI-assisted market reasoning.
-It integrates with Polymarket’s live data client and supports AI via SDKs like OpenAI, Mistral, and OpenRouter, enabling Discord communities to access intelligent, market-aware responses without exposing API keys in code.
+It integrates with Polymarket’s live data client and supports AI via SDKs like OpenAI, Mistral, and OpenRouter, enabling Discord communities to access intelligent, market-aware responses.
 
 PolyXBT acts as a community trading assistant, fetching real-time event data, analyzing probabilities, and summarizing sentiment — all within Discord.
 
@@ -26,7 +26,7 @@ PolyXBT acts as a community trading assistant, fetching real-time event data, an
 **🏗️ Project Structure**
 Folder / File	Description
 index.js	Bot entrypoint — loads Discord client, commands, and AI SDK handlers
-src/	Core source files (commands, API connectors, adapters)
+src/	Core source files (commands, SDK connectors, adapters)
 src/ai/	AI SDK integration logic (OpenAI, Mistral, OpenRouter)
 src/market/	Polymarket API connectors for real-time data
 config/	SDK selection and configuration
@@ -58,7 +58,7 @@ User sends a command in Discord, e.g.:
 /predict "Who will win the US Election?"
 
 
-PolyXBT fetches data from Polymarket via the open API:
+PolyXBT fetches data from Polymarket via the openai / Mistral / openrouter SDK:
 
 https://clob.polymarket.com/markets
 
@@ -81,7 +81,7 @@ channel.send(`🧠 PolyXBT Insight:\n${response.output}`);
 
 **You can swap OpenAI or OpenRouter by updating config/sdk.js.**
 
-SDK usage avoids exposing raw API keys in commands or logs.
+SDK usage avoids exposing raw in commands or logs.
 
 **🪙 Polymarket Data Integration**
 
@@ -107,8 +107,8 @@ AI-generated reasoning summary
 Discord User → PolyXBT Bot → Polymarket API
                      ↓
              AI Adapter Layer (SDK)
-     ├─ OpenAI GPT-4
-     ├─ Mistral Medium
+     ├─ OpenAI GPT-4 - sdk model
+     ├─ Mistral Medium - sdk model
      └─ OpenRouter / OSS Models
                      ↓
               Discord Response
